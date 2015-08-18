@@ -1,0 +1,25 @@
+<div data-ng-init="getImages()">
+
+    <h1 class="text-center text-info">Images Page</h1>
+
+
+    <h3 ng-show="! images.length && !loader" class="text-info text-center" >
+        No image posted yet.
+    </h3>
+
+    <div ng-show="loader" class="text-center"><img src="assets/default.svg"></div>
+
+    <div class="row">
+        <div ng-repeat="image in images" class="col-md-4">
+            <div class="panel panel-primary">
+
+                <a ng-href="#/images/{{image.id}}">
+                    <h4 class="text-center">{{ image.caption }}</h4>
+                    <img ng-src="{{ image.avatar }}" alt="{{image.caption}}"/>
+                </a>
+
+            </div>
+        </div>
+    </div>
+
+</div>

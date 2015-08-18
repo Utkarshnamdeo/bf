@@ -1,8 +1,10 @@
-angular.module('Bifortis', []).
-    controller('AppCtrl', ['$scope','$http', function($scope,$http){
+angular.module('Bifortis', ['ngRoute']).
+    controller('AppCtrl', ['$scope','$http','$routeParams', function($scope,$http,$routeParams){
 
         $scope.upload = function(data)
         {
+            $scope.formLoader = true;
+
             $scope.errorMsg ='';
 
             var fd = new FormData();
@@ -14,12 +16,12 @@ angular.module('Bifortis', []).
                 transformRequest: angular.identity, //No serialize
                 headers: { 'Content-Type': undefined }
             }).success(function(data){
+                $scope.formLoader = false;
                 $scope.images.push(data);
                 $scope.data = {};
-                $scope.data.avatar = {};
             }).error(function (data, status) {
+                $scope.formLoader = false;
                 if(status == 422){
-
                     angular.forEach(data, function(elem){
                         if(! elem.undefined) $scope.errorMsg += elem[0];
                     })
@@ -31,9 +33,28 @@ angular.module('Bifortis', []).
 
         $scope.getImages = function()
         {
+            $scope.loader = true;
             $http.get('api/images')
                 .success(function(data){
+                    $scope.loader = false;
                     $scope.images = data;
+                }).error(function(){
+                    $scope.loader = false;
+                });
+        }
+
+        $scope.getImage = function()
+        {
+            $scope.loader = true;
+
+            var id = $routeParams.id;
+
+            $http.get('api/images/'+id)
+                .success(function(data){
+                    $scope.loader = false;
+                    $scope.image = data;
+                }).error(function(data, status){
+                    $scope.loader = false;
                 });
         }
 
@@ -52,4 +73,20 @@ angular.module('Bifortis', []).
                 })
             }
         };
-    }])
+    }]).
+    config(function($routeProvider, $locationProvider) {
+        $routeProvider
+            .when('/', {
+                templateUrl: 'views/home.html',
+                controller: 'AppCtrl'
+            })
+            .when('/images/:id', {
+                templateUrl: 'views/images/show.html',
+                controller: 'AppCtrl'
+            })
+            .when('/images', {
+                templateUrl: 'views/images/index.html',
+                controller: 'AppCtrl'
+            });
+
+    })

@@ -1,0 +1,14 @@
+<div data-ng-init="getImage()">
+
+    <h3 ng-show="! image && ! loader" class="text-danger text-center" >
+        The requested uri is invalid.
+    </h3>
+
+    <div ng-show="loader" class="text-center"><img src="assets/default.svg"></div>
+
+    <div class="row text-center">
+        <h4>{{ image.caption }}</h4>
+        <img ng-src="{{ image.avatar }}" alt="{{image.caption}}"/>
+    </div>
+
+</div>
